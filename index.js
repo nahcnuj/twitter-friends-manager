@@ -14,7 +14,6 @@ const CONSUMER_KEY = process.env.CONSUMER_KEY;
 const CONSUMER_SECRET = process.env.CONSUMER_SECRET;
 
 const app = express();
-app.use(session());
 app.listen(port);
 
 console.log(`Server running at port ${port}`);
