@@ -23,7 +23,7 @@ const oa = new OAuth(
     process.env.CONSUMER_KEY,
     process.env.CONSUMER_SECRET,
     '1.0A',
-    `http://127.0.0.1:${port}/auth/twitter/callback`,
+    `http://followmgr.azurewebsites.net/auth/twitter/callback`,
     'HMAC-SHA1'
 );
 
