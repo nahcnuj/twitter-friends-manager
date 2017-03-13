@@ -34,7 +34,9 @@ app.get('/auth/twitter', function(request, result) {
             result.send("Didn't work.");
         }
         else {
-            request.session.oauth = {token: oauth_token, token_secret: oauth_token_secret};
+            request.session.oauth = {};
+            request.session.oauth.token = oauth_token;
+            request.session.oauth.token_secret = oauth_token_secret;
             console.debug(`oauth.token: ${request.session.oauth.token}`);
             console.debug(`oauth.token: ${request.session.oauth.token_secret}`);
             result.redirect(`https://twitter.com/oauth/authenticate?oauth_token=${oauth_token}`);
