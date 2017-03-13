@@ -16,8 +16,8 @@ console.log(`Server running at port ${port}`);
 
 app.get('/', function(request, result) {
     var data = ejs.render(template, {});
-    result.writeHead(200, {'Content-Type': 'application/json'});
-    //result.write(data);
-    result.write(JSON.stringify(process.env));
+    result.writeHead(200, {'Content-Type': 'text/html'});
+    result.write(data);
+    //result.write(JSON.stringify(process.env));
     result.end();
 });
