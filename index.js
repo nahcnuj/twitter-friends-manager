@@ -5,6 +5,7 @@ const //http = require('http'),
     ejs = require('ejs'),
     //qs = require('qs'),
     express = require('express'),
+    session = require('express-session'),
     OAuth = require('oauth').OAuth;
 const settings = require('./settings');
 const port = process.env.port || settings.port;
@@ -13,7 +14,7 @@ const CONSUMER_KEY = process.env.CONSUMER_KEY;
 const CONSUMER_SECRET = process.env.CONSUMER_SECRET;
 
 const app = express();
-app.use(express.session());
+app.use(session());
 app.listen(port);
 
 console.log(`Server running at port ${port}`);
