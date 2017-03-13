@@ -12,7 +12,7 @@ const template = fs.readFileSync(`${__dirname}/public_html/index.ejs`, 'utf-8');
 const CONSUMER_KEY = process.env.CONSUMER_KEY;
 const CONSUMER_SECRET = process.env.CONSUMER_SECRET;
 
-const app = express();
+var app = express();
 app.configure(function(){
     app.use(express.session());
 });
