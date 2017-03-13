@@ -12,10 +12,8 @@ const template = fs.readFileSync(`${__dirname}/public_html/index.ejs`, 'utf-8');
 const CONSUMER_KEY = process.env.CONSUMER_KEY;
 const CONSUMER_SECRET = process.env.CONSUMER_SECRET;
 
-var app = express();
-app.configure(function(){
-    app.use(express.session());
-});
+const app = express();
+app.use(express.session());
 app.listen(port);
 
 console.log(`Server running at port ${port}`);
