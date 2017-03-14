@@ -1,0 +1,3 @@
+{
+    "callbackURL": "https://followmgr.azurewebsites.net/auth/twitter/callback"
+}
