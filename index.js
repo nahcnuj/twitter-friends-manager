@@ -8,7 +8,7 @@ const //http = require('http'),
     session = require('express-session'),
     OAuth = require('oauth').OAuth;
 
-const isDebug = process.env.DEBUG === undefined;
+const isDebug = process.env.DEBUG !== undefined;
 
 const settings = require('./settings');
 const port = process.env.PORT || settings.port;
