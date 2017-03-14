@@ -7,13 +7,29 @@ const //http = require('http'),
     express = require('express'),
     session = require('express-session'),
     OAuth = require('oauth').OAuth;
+
+const isDebug = process.env.DEBUG === undefined;
+
 const settings = require('./settings');
-const port = process.env.port || settings.port;
-const template = fs.readFileSync(`${__dirname}/public_html/index.ejs`, 'utf-8');
+const port = process.env.PORT || settings.port;
+const host = isDebug ? `http://localhost:${port}` : `http://followmgr.azurewebsites.net`;
+
 const CONSUMER_KEY = process.env.CONSUMER_KEY;
 const CONSUMER_SECRET = process.env.CONSUMER_SECRET;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+
+const template = fs.readFileSync(`${__dirname}/public_html/index.ejs`, 'utf-8');
 
 const app = express();
+app.use(session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: true,
+        maxAge: 30 * 60 * 1000  // 30 min
+    }
+}));
 app.listen(port);
 
 console.log(`Server running at port ${port}`);
@@ -21,10 +37,10 @@ console.log(`Server running at port ${port}`);
 const oa = new OAuth(
     'https://api.twitter.com/oauth/request_token',
     'https://api.twitter.com/oauth/access_token',
-    process.env.CONSUMER_KEY,
-    process.env.CONSUMER_SECRET,
+    CONSUMER_KEY,
+    CONSUMER_SECRET,
     '1.0A',
-    `http://followmgr.azurewebsites.net/auth/twitter/callback`,
+    `${host}/auth/twitter/callback`,
     'HMAC-SHA1'
 );
 
@@ -35,11 +51,12 @@ app.get('/auth/twitter', function(request, result) {
             result.send("Didn't work.");
         }
         else {
-            request.session.oauth = {};
-            request.session.oauth.token = oauth_token;
-            request.session.oauth.token_secret = oauth_token_secret;
-            console.debug(`oauth.token: ${request.session.oauth.token}`);
-            console.debug(`oauth.token: ${request.session.oauth.token_secret}`);
+            request.session.oauth = {
+                token: oauth_token,
+                token_secret: oauth_token_secret
+            };
+            console.log(`oauth.token: ${request.session.oauth.token}`);
+            console.log(`oauth.token_secret: ${request.session.oauth.token_secret}`);
             result.redirect(`https://twitter.com/oauth/authenticate?oauth_token=${oauth_token}`);
         }
     })
