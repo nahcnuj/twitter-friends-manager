@@ -8,7 +8,8 @@ var session = require('express-session');
 var OAuth = require('oauth').OAuth;
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var twitter = require('./routes/twitter');
+//var users = require('./routes/users');
 
 var app = express();
 
@@ -33,7 +34,8 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/auth/twitter', twitter)
+//app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
