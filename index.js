@@ -55,12 +55,39 @@ app.get('/auth/twitter', function(request, result) {
                 token: oauth_token,
                 token_secret: oauth_token_secret
             };
-            console.log(`oauth.token: ${request.session.oauth.token}`);
-            console.log(`oauth.token_secret: ${request.session.oauth.token_secret}`);
+            console.log(request.session);
             result.redirect(`https://twitter.com/oauth/authenticate?oauth_token=${oauth_token}`);
         }
-    })
-})
+    });
+});
+
+app.get('/auth/twitter/callback', function(request, result, next) {
+    console.log(request.session);
+    if (request.session.oauth) {
+        request.session.oauth.verifier = request.query.oauth_verifier;
+        
+        const oauth = request.session.oauth;
+
+        oa.getOAuthAccessToken(
+            oauth.token, oauth.token_secret, oauth.verifier,
+            function(error, oauth_access_token, oauth_access_token_secret, _) {
+                if (error) {
+                    console.error(error);
+                    result.status(500).send('Something broke!');
+                }
+                else {
+                    request.session.oauth.access_token = oauth_access_token;
+                    request.session.oauth.access_token_secret = oauth_access_token_secret;
+                    console.log(_);
+                    result.send('Worked good.');
+                }
+            }
+        );
+    }
+    else {
+        next(new Error("You're not supposed to be here."));
+    }
+});
 
 /*
 app.get('/', function(request, result) {
