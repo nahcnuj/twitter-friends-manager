@@ -32,7 +32,7 @@ app.use(session({
 }));
 app.listen(port);
 
-console.log(`Server running at port ${port}`);
+console.log(`Server running at ${host}, ${port}`);
 
 const oa = new OAuth(
     'https://api.twitter.com/oauth/request_token',
