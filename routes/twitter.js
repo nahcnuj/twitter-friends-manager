@@ -3,15 +3,15 @@ var config = require('config');
 var OAuth = require('oauth').OAuth;
 var router = express.Router();
 
-  console.log(process.env.NODE_ENV);
-  console.log(config);
+console.log(process.env.NODE_ENV);
+console.log(config);
 var oauth = new OAuth(
     'https://api.twitter.com/oauth/request_token',
     'https://api.twitter.com/oauth/access_token',
     process.env.CONSUMER_KEY,
     process.env.CONSUMER_SECRET,
     '1.0A',
-    config.get('callbackURL'),
+    config.get('twitter.callbackURL'),
     'HMAC-SHA1'
 );
 
