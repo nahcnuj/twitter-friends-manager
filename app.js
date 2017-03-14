@@ -6,6 +6,7 @@ const //http = require('http'),
     //qs = require('qs'),
     express = require('express'),
     session = require('express-session'),
+    cookieParser = require('cookie-parser'),
     OAuth = require('oauth').OAuth;
 
 const isDebug = process.env.DEBUG !== undefined;
@@ -21,9 +22,10 @@ const SESSION_SECRET = process.env.SESSION_SECRET;
 const template = fs.readFileSync(`${__dirname}/public_html/index.ejs`, 'utf-8');
 
 const app = express();
+app.use(cookieParser());
 app.use(session({
     secret: SESSION_SECRET,
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: {
         secure: true,
@@ -55,8 +57,10 @@ app.get('/auth/twitter', function(request, result) {
                 token: oauth_token,
                 token_secret: oauth_token_secret
             };
-            console.log(request.session);
-            result.redirect(`https://twitter.com/oauth/authenticate?oauth_token=${oauth_token}`);
+            request.session.save(function() {
+                console.log(request.session);
+                result.redirect(`https://twitter.com/oauth/authenticate?oauth_token=${oauth_token}`);
+            });
         }
     });
 });
