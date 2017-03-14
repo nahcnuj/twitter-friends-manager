@@ -11,7 +11,6 @@ router.get('/', function(req, res, next) {
       access_token_key: req.session.oauth.access_token,
       access_token_secret: req.session.oauth.access_token_secret
     });
-    console.log(client);
     client.get('friends/list', {}, function(err, friends, response) {
       if (err) {
         next(err);
@@ -23,7 +22,7 @@ router.get('/', function(req, res, next) {
     //res.render('index', { isLogined: true, twitter: req.session.twitter });
   }
   else {
-    res.render('index', { isLogined: false });
+    res.render('index', { isLoggedIn: false });
   }
 });
 

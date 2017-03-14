@@ -16,6 +16,12 @@
 <div class="navbar-header">
 <h1><a href="/" class="navbar-brand">フレマネ</a></h1>
 </div>
+
+<% if (isLoggedIn) { %>
+<ul class="nav navbar-nav">
+<li><a href="/manager">管理画面</a></li>
+</ul>
+<% } %>
 </div>
 </nav>
 
@@ -23,11 +29,17 @@
 <section>
 <div class="container">
 <p class="lead">Twitter のフォロー管理を支援するツールです。</p>
-<p>
-<a class="btn btn-block btn-social btn-twitter btn-lg">
+<p class="text-center">
+<% if (isLoggedIn) {%>
+<a class="btn btn-lg" href="/manager">
+  管理画面へ
+</a>
+<% } else { %>
+<a class="btn btn-social btn-twitter btn-lg" href="/auth/twitter">
   <span class="fa fa-twitter"></span>
   Sign in with Twitter
 </a>
+<% } %>
 </p>
 </div>
 </section>
