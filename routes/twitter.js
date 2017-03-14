@@ -3,8 +3,6 @@ var config = require('config');
 var OAuth = require('oauth').OAuth;
 var router = express.Router();
 
-console.log(process.env.NODE_ENV);
-console.log(config);
 var oauth = new OAuth(
     'https://api.twitter.com/oauth/request_token',
     'https://api.twitter.com/oauth/access_token',
