@@ -12,7 +12,7 @@ const //http = require('http'),
 const isDebug = process.env.DEBUG !== undefined;
 
 const settings = require('./settings');
-const port = process.env.port || settings.port;
+const port = process.env.port || 3000;
 const host = isDebug ? `http://localhost:${port}` : `http://followmgr.azurewebsites.net`;
 
 const CONSUMER_KEY = process.env.CONSUMER_KEY;
