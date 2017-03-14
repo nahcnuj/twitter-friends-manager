@@ -25,10 +25,9 @@ const app = express();
 app.use(cookieParser());
 app.use(session({
     secret: SESSION_SECRET,
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: true,
         maxAge: 30 * 60 * 1000  // 30 min
     }
 }));
@@ -53,14 +52,14 @@ app.get('/auth/twitter', function(request, result) {
             result.send("Didn't work.");
         }
         else {
-            request.session.oauth = {
-                token: oauth_token,
-                token_secret: oauth_token_secret
-            };
+            request.session.oauth = {};
+            request.session.oauth.token = oauth_token;
+            request.session.oauth.token_secret = oauth_token_secret;
             request.session.save(function() {
                 console.log(request.session);
-                result.redirect(`https://twitter.com/oauth/authenticate?oauth_token=${oauth_token}`);
             });
+            console.log(request.session);
+            result.redirect(`https://twitter.com/oauth/authenticate?oauth_token=${oauth_token}`);
         }
     });
 });
