@@ -30,4 +30,28 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/callback', function(req, res, next) {
+  if (req.session.oauth) {
+    req.session.oauth.verifier = req.query.oauth_verifier;
+    var oa = req.session.oauth;
+    oauth.getOAuthAccessToken(
+      oa.token, oa.token_secret, oa.verifier,
+      function(err, access_token, access_token_secret, results) {
+        if (err) {
+          res.status(403).send('something broke');
+        }
+        else {
+          req.session.oauth.access_token = access_token;
+          req.session.oauth.access_token_secret = access_token_secret;
+          req.session.twitter = results;
+          res.redirect('/');
+        }
+      }
+    );
+  }
+  else {
+    next(new Error("you're not supposed to be here"));
+  }
+});
+
 module.exports = router;

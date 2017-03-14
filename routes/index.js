@@ -8,7 +8,6 @@ router.get('/', function(req, res, next) {
     res.render('index', { isLogined: true });
   }
   else {
-    var client = new Twitter
     res.render('index', { isLogined: false });
   }
 });
