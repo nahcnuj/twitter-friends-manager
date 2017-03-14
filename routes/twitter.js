@@ -14,6 +14,8 @@ var oauth = new OAuth(
 );
 
 router.get('/', function(req, res, next) {
+  console.log(process.env.NODE_ENV);
+  console.log(config);
   oauth.getOAuthRequestToken(function(err, token, secret, results) {
     if (err) {
       console.error(err);
