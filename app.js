@@ -9,7 +9,7 @@ var OAuth = require('oauth').OAuth;
 
 var index = require('./routes/index');
 var twitter = require('./routes/twitter');
-//var users = require('./routes/users');
+var manager = require('./routes/manager');
 
 var app = express();
 
@@ -37,10 +37,11 @@ app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/css', express.static(__dirname + '/public/stylesheets'))
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
+app.use('/css', express.static(__dirname + '/node_modules/bootstrap-social/'));
 
 app.use('/', index);
 app.use('/auth/twitter', twitter)
-//app.use('/users', users);
+app.use('/manager', manager);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
