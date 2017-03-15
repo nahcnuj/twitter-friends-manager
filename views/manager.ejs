@@ -39,17 +39,24 @@
 <tbody>
 <% data.forEach(function(elem) { %>
 <tr>
-<td><img src="<%= elem.account.profile_image_url %>" alt="@<%= elem.account.screen_name %>"></td>
-<td><small class="text-muted">@<%= elem.account.screen_name %>
-<%- elem.account.protected ? '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '' %></small><br /><%= elem.account.name %></td>
+<td><a href="//twitter.com/<%= elem.account.screen_name %>">
+    <img src="<%= elem.account.profile_image_url %>" alt="@<%= elem.account.screen_name %>">
+</a></td>
+<td><a href="//twitter.com/<%= elem.account.screen_name %>" class="no-hover">
+    <small class="text-muted">@<%= elem.account.screen_name %>
+        <%- elem.account.protected ? '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '' %>
+    </small>
+    <br />
+    <%= elem.account.name %>
+</a></td>
 <td><%= elem.account.description %></td>
 <td><%= elem.last_tweet.text %></td>
 <td><%= elem.last_tweet.created_at %></td>
 <td>
-<a class="btn btn-social btn-twitter btn-xs" href="">
+<button class="btn btn-social btn-twitter btn-xs">
   <span class="fa fa-twitter"></span>
   <%= elem.account.following ? '解除' : 'フォロー' %>
-</a>
+</button>
 </td>
 </tr>
 <% }) %>

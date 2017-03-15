@@ -1,4 +1,5 @@
 var Twitter = require('twitter');
+var Moment = require('moment');
 var express = require('express');
 var router = express.Router();
 
@@ -43,7 +44,21 @@ function getFriends(client) {
     client.get(
       'friends/list',
       {},
-      (err, friends, _) => { err ? reject(err) : resolve(friends.users); }
+      (err, friends, _) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(friends.users.map(user => ({
+            screen_name: user.screen_name,
+            name: user.name,
+            profile_image_url: user.profile_image_url,
+            protected: user.protected,
+            description: user.description,
+            following: user.following
+          })));
+        }
+      }
     ));
 }
 
@@ -52,6 +67,18 @@ function getLastTweet(client, friend) {
     client.get(
       'statuses/user_timeline',
       { screen_name: friend.screen_name, count: 1 },
-      (err, tweets, _) => { err ? reject(err) : resolve(tweets[0]); }
+      (err, tweets, _) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          var tweet = tweets[0];
+          var moment = Moment(new Date(tweet.created_at)).format('YYYY/MM/DD HH:MM:ss Z');
+          resolve({
+            text: tweet.text,
+            created_at: moment
+          });
+        }
+      }
     ));
 }
