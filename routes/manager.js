@@ -51,7 +51,7 @@ function getFriends(client) {
   return new Promise((resolve, reject) =>
     client.get(
       'friends/list',
-      { count: 200 },
+      {},
       (err, friends, _) => {
         if (err) {
           reject(err);
