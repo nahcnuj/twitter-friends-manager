@@ -8,7 +8,7 @@ var message = {
   'Rate limit exceeded': 'Twitter API の取得制限に達しました。時間を置いて再読み込みしてください。'
 };
 
-/* GET home page. */
+// GET a list of the following users
 router.get('/', function(req, res, next) {
   if (req.session.oauth) {
     var client = new Twitter({
@@ -36,6 +36,7 @@ router.get('/', function(req, res, next) {
 
 module.exports = router;
 
+// create a pair object of a friend and their last tweet
 function getData(client, friend) {
   return new Promise((resolve, reject) => {
     Promise.resolve()
@@ -45,11 +46,12 @@ function getData(client, friend) {
   });
 }
 
+// get a list of following users
 function getFriends(client) {
   return new Promise((resolve, reject) =>
     client.get(
       'friends/list',
-      {},
+      { count: 200 },
       (err, friends, _) => {
         if (err) {
           reject(err);
@@ -68,6 +70,7 @@ function getFriends(client) {
     ));
 }
 
+// get a last tweet who the following user posted
 function getLastTweet(client, friend) {
   return new Promise((resolve, reject) =>
     client.get(

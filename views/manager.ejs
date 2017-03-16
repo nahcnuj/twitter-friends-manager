@@ -43,30 +43,24 @@
 <th>フォロー</th>
 </tr>
 </thead>
-<tbody>
-<% data.forEach(function(elem) { %>
+<tbody><% data.forEach(function(elem) { %>
 <tr class="limited-size-row">
-<td><a href="//twitter.com/<%= elem.account.screen_name %>">
-    <img src="<%= elem.account.profile_image_url %>" alt="@<%= elem.account.screen_name %>">
+<td><a href="https://twitter.com/<%= elem.account.screen_name %>">
+<img src="<%= elem.account.profile_image_url %>" alt="@<%= elem.account.screen_name %>">
 </a></td>
-<td><span class="limited-size-cell-wrap"><span class="limited-size-cell"><a href="//twitter.com/<%= elem.account.screen_name %>" class="no-hover">
-    <small class="text-muted">@<%= elem.account.screen_name %>
-        <%- elem.account.protected ? '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '' %>
-    </small>
-    <br />
-    <%= elem.account.name %>
-</a></span></span></td>
-<td><span class="limited-size-cell-wrap"><span class="limited-size-cell"><%= elem.account.description %></span></span></td>
-<td><span class="limited-size-cell-wrap"><span class="limited-size-cell"><%= elem.last_tweet.text %></span></span></td>
+<td><span class="limited-size-cell"><a href="https://twitter.com/<%= elem.account.screen_name %>" class="no-hover">
+<small class="text-muted">@<%= elem.account.screen_name %> <%- elem.account.protected ? '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '' %></small><br />
+<%= elem.account.name %>
+</a></span></td>
+<td><span class="limited-size-cell"><%= elem.account.description %></span></td>
+<td><span class="limited-size-cell"><%= elem.last_tweet.text %></span></td>
 <td><%= elem.last_tweet.created_at %></td>
-<td>
-<button class="btn btn-twitter">
-  <%= elem.account.following ? '解除' : 'フォロー' %>
-</button>
-</td>
+<td><form action="/unfollow" method="post">
+<input type="hidden" name="screen_name" value="<%= elem.account.screen_name %>" />
+<button class="btn btn-twitter"><%= elem.account.following ? '解除' : 'フォロー' %></button>
+</form></td>
 </tr>
-<% }) %>
-</tbody>
+<% }) %></tbody>
 </table>
 <% } else { %>
 <div class="panel panel-danger">

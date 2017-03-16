@@ -10,6 +10,7 @@ var OAuth = require('oauth').OAuth;
 var index = require('./routes/index');
 var twitter = require('./routes/twitter');
 var manager = require('./routes/manager');
+var unfollow = require('./routes/unfollow');
 
 var app = express();
 
@@ -51,6 +52,7 @@ app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap-social/ass
 app.use('/', index);
 app.use('/auth/twitter', twitter)
 app.use('/manager', manager);
+app.use('/unfollow', unfollow);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
