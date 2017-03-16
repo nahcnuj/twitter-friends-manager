@@ -31,10 +31,10 @@
 </div>
 </nav>
 
-
 <section>
 <div class="container">
-<table class="table table-striped table-condensed">
+<% if (typeof data !== "undefined") { %>
+<table class="table table-striped table-condensed manager">
 <thead>
 <tr>
 <th colspan="2">アカウント</th>
@@ -60,7 +60,7 @@
 <td><%= elem.last_tweet.text %></td>
 <td><%= elem.last_tweet.created_at %></td>
 <td>
-<button class="btn btn-social btn-twitter btn-xs">
+<button class="btn btn-social btn-twitter">
   <span class="fa fa-twitter"></span>
   <%= elem.account.following ? '解除' : 'フォロー' %>
 </button>
@@ -69,9 +69,14 @@
 <% }) %>
 </tbody>
 </table>
+<% } else { %>
+<div class="panel panel-danger">
+<div class="panel-heading"><h1 class="panel-title"><%= message %></h1></div>
+<p class="panel-body">Message: <%= reason %></p>
+</div>
+<% } %>
 </div>
 </section>
-
 
 <footer id="footer">
 <div class="container">

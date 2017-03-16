@@ -3,6 +3,11 @@ var Moment = require('moment');
 var express = require('express');
 var router = express.Router();
 
+// error message
+var message = {
+  'Rate limit exceeded': 'Twitter API の取得制限に達しました。時間を置いて再読み込みしてください。'
+};
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   if (req.session.oauth) {
@@ -20,7 +25,8 @@ router.get('/', function(req, res, next) {
         res.render('manager', {data: result})
       })
       .catch(reason => {
-        console.error(reason)
+        res.render('manager', {message: message[reason[0].message], reason: reason[0].message});
+        console.error(reason);
       });
   }
   else {
