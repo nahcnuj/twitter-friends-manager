@@ -31,15 +31,23 @@ app.use(session({
     maxAge: 30 * 60 * 1000  // 30 min
   }
 }));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
+// bootstrap
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
-app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
-app.use('/css', express.static(__dirname + '/node_modules/bootstrap-social'));
-app.use('/css', express.static(__dirname + '/public/stylesheets'));
 app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap/dist/fonts'));
 
+// jquery
+app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
+
+// bootstrap-social
+app.use('/css', express.static(__dirname + '/node_modules/bootstrap-social'));
+app.use('/css', express.static(__dirname + '/node_modules/bootstrap-social/assets/css'));
+app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap-social/assets/fonts'));
+
+// routes
 app.use('/', index);
 app.use('/auth/twitter', twitter)
 app.use('/manager', manager);
