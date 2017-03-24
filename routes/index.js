@@ -5,10 +5,10 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   if (req.session.oauth) {
-    res.render('index', { isLoggedIn: true });
+    res.redirect('/manager');
   }
   else {
-    res.render('index', { isLoggedIn: false });
+    res.render('index');
   }
 });
 
