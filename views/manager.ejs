@@ -49,7 +49,7 @@
 <img src="<%= elem.account.profile_image_url %>" alt="@<%= elem.account.screen_name %>">
 </a></td>
 <td><span class="limited-size-cell"><a href="https://twitter.com/<%= elem.account.screen_name %>" class="no-hover">
-<small class="text-muted">@<%= elem.account.screen_name %> <%- elem.account.protected ? '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '' %></small><br />
+<small class="text-muted">@<%= elem.account.screen_name %><%- elem.account.protected ? ' <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '' %></small><br />
 <%= elem.account.name %>
 </a></span></td>
 <td><span class="limited-size-cell"><%= elem.account.description %></span></td>
