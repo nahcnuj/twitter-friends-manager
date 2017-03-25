@@ -35,32 +35,37 @@
 <div class="container">
 <% if (typeof data !== "undefined") { %>
 <table class="table table-striped table-condensed manager">
-<thead>
-<tr>
-<th colspan="2">アカウント</th>
-<th>プロフィール</th>
-<th colspan="2">最近のツイート</th>
-<th>フォロー</th>
-</tr>
-</thead>
-<tbody><% data.forEach(function(elem) { %>
-<tr class="limited-size-row">
-<td><a href="https://twitter.com/<%= elem.account.screen_name %>">
-<img src="<%= elem.account.profile_image_url %>" alt="@<%= elem.account.screen_name %>">
-</a></td>
-<td><span class="limited-size-cell"><a href="https://twitter.com/<%= elem.account.screen_name %>" class="no-hover">
-<small class="text-muted">@<%= elem.account.screen_name %><%- elem.account.protected ? ' <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '' %></small><br />
-<%= elem.account.name %>
-</a></span></td>
-<td><span class="limited-size-cell"><%= elem.account.description %></span></td>
-<td><span class="limited-size-cell"><%= elem.last_tweet.text %></span></td>
-<td><%= elem.last_tweet.created_at %></td>
-<td><form action="/unfollow" method="post">
-<input type="hidden" name="screen_name" value="<%= elem.account.screen_name %>" />
-<button class="btn btn-twitter"><%= elem.account.following ? '解除' : 'フォロー' %></button>
-</form></td>
-</tr>
-<% }) %></tbody>
+  <thead>
+    <tr>
+      <th colspan="2">アカウント</th>
+      <th>プロフィール</th>
+      <th colspan="2">最近のツイート</th>
+      <th>フォロー</th>
+    </tr>
+  </thead>
+  <tbody><% data.forEach(function(elem) { %>
+    <tr class="limited-size-row">
+      <td><a href="https://twitter.com/<%= elem.screen_name %>">
+        <img src="<%= elem.profile_image_url %>" alt="@<%= elem.screen_name %>">
+      </a></td>
+      <td><span class="limited-size-cell">
+        <a href="https://twitter.com/<%= elem.screen_name %>" class="no-hover">
+          <small class="text-muted">
+            @<%= elem.screen_name %>
+            <%- elem.protected ? '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '' %>
+          </small><br />
+          <%= elem.name %>
+        </a>
+      </span></td>
+      <td><%= elem.description %></td>
+      <td><%= elem.last_tweet.text %></td>
+      <td><%= elem.last_tweet.created_at %></td>
+      <td><form action="/unfollow" method="post">
+        <input type="hidden" name="screen_name" value="<%= elem.screen_name %>" />
+        <button class="btn btn-twitter"><%= elem.following ? '解除' : 'フォロー' %></button>
+      </form></td>
+    </tr>
+  <% }) %></tbody>
 </table>
 <% } else { %>
 <div class="panel panel-danger">
