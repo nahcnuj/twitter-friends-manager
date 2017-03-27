@@ -22,7 +22,7 @@ gulp.task('browser-sync',
 
 gulp.task('build',
     () => {
-        browserify('./index.js')
+        browserify('./react_sources/index.js')
             .transform(babelify.configure({
                 presets: ['react', 'es2015']
             }))
@@ -30,7 +30,7 @@ gulp.task('build',
             .on('error', errorHandler)
             .pipe(source('bundle.js'))
             .pipe(buffer())
-            .pipe(gulp.dest('./build'))
+            .pipe(gulp.dest('./public/javascripts'))
             .pipe(browserSync.reload({stream: true}));
     });
 
