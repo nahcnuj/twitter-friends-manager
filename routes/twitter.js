@@ -1,6 +1,7 @@
 var express = require('express');
 var config = require('config');
 var OAuth = require('oauth').OAuth;
+var reactCookie = require('react-cookie');
 var router = express.Router();
 
 var oauth = new OAuth(
@@ -13,6 +14,7 @@ var oauth = new OAuth(
     'HMAC-SHA1'
 );
 
+/* GET /auth/twitter */
 router.get('/', function(req, res, next) {
   oauth.getOAuthRequestToken(function(err, token, secret, results) {
     if (err) {
@@ -24,12 +26,12 @@ router.get('/', function(req, res, next) {
         token: token,
         token_secret: secret
       };
-      req.session.save(function(){});
       res.redirect(`https://twitter.com/oauth/authenticate?oauth_token=${token}`);
     }
   })
 });
 
+/* GET /auth/twitter/callback */
 router.get('/callback', function(req, res, next) {
   if (req.session.oauth) {
     req.session.oauth.verifier = req.query.oauth_verifier;
@@ -40,12 +42,21 @@ router.get('/callback', function(req, res, next) {
         if (err) {
           res.status(403).send('something broke');
         }
-        else {
-          req.session.oauth.access_token = access_token;
-          req.session.oauth.access_token_secret = access_token_secret;
-          req.session.twitter = results;
-          res.redirect('/manager');
-        }
+
+        const unplug = reactCookie.plugToRequest(req, res);
+
+        req.session.oauth.access_token = access_token;
+        req.session.oauth.access_token_secret = access_token_secret;
+        
+        reactCookie.remove('oauth', {path: '/'});
+        let value = {
+          access_token: access_token,
+          access_token_secret: access_token_secret
+        };
+        reactCookie.save('oauth', JSON.stringify(value), {path: '/'});
+        unplug();
+
+        res.redirect('/');
       }
     );
   }

@@ -1,5 +1,5 @@
 {
     "twitter": {
-        "callbackURL": "http://localhost:3000/auth/twitter/callback"
+        "callbackURL": "http://localhost:8080/auth/twitter/callback"
     }
 }

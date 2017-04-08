@@ -11,7 +11,7 @@
     "bootstrap": "^3.3.7",
     "bootstrap-social": "^5.1.1",
     "config": "^1.25.1",
-    "cookie-parser": "~1.4.3",
+    "cookie-parser": "^1.4.3",
     "debug": "~2.6.0",
     "ejs": "~2.5.5",
     "express": "~4.14.1",
@@ -21,6 +21,7 @@
     "morgan": "~1.7.0",
     "oauth": "^0.9.15",
     "react": "^15.4.2",
+    "react-cookie": "^1.0.5",
     "react-dom": "^15.4.2",
     "serve-favicon": "~2.3.2",
     "twitter": "^1.7.0"

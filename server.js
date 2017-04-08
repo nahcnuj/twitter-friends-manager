@@ -31,6 +31,10 @@ app.use('/', express.static(__dirname));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
 // bootstrap
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
@@ -44,32 +48,17 @@ app.use('/css', express.static(__dirname + '/node_modules/bootstrap-social'));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap-social/assets/css'));
 app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap-social/assets/fonts'));
 
-app.get('/comments.json',
-    (req, res) => {
-        fs.readFile('comments.json',
-            (err, data) => {
-                res.setHeader('Cache-Control', 'no-cache');
-                res.json(JSON.parse(data));
-            }
-        );
-    });
 
-app.post('/comments.json',
-    (req, res) => {
-        fs.readFile('comments.json',
-            (err, data) => {
-                let comments = JSON.parse(data);
-                comments.push(req.body);
-                fs.writeFile('comments.json', JSON.stringify(comments, null, 4),
-                    (err) => {
-                        res.setHeader('Cache-Control', 'no-cache');
-                        res.json(comments);
-                    });
-            }
-        );
-    });
+// routes
+const index = require('./routes/index');
+const twitter = require('./routes/twitter');
+
+app.use('/', index);
+app.use('/auth/twitter', twitter);
 
 app.listen(app.get('port'),
     () => {
         console.log('Server started at http://localhost:' + app.get('port'));
     });
+
+module.exports = app;
