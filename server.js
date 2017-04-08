@@ -52,9 +52,11 @@ app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap-social/ass
 // routes
 const index = require('./routes/index');
 const twitter = require('./routes/twitter');
+const load = require('./routes/load');
 
 app.use('/', index);
 app.use('/auth/twitter', twitter);
+app.use('/load', load);
 
 app.listen(app.get('port'),
     () => {
