@@ -1,38 +1,22 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import cookie from 'react-cookie';
-import $ from 'jquery';
-//import Twitter from 'twitter';
+
+import Manager from './Manager';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    let oauthData = cookie.load('oauth', true);
-    if (oauthData !== undefined) {
-      this.state = {
-        oauth: JSON.parse(oauthData)
-      };
-    }
-    else {
-      this.state = {
-        oauth: undefined
-      };
-    }
-  }
-
-  componentWillMount() {
-    /*$.ajax({
-      url: '/',
-      dataType: 'json',
-      cache: false,
-      success: (data) => { this.setState({oauth: JSON.stringify(data)}); },
-      error: (xhr, status, err) => { console.error(this.props, status, err.toString()); }
-    });*/
+    this.state = {
+      oauth: cookie.load('oauth')
+    };
   }
 
   render() {
-    if (!this.state.oauth) {
+    let oauth = this.state.oauth;
+
+    if (!oauth) {
       return <div>
           <p className="lead">Twitter のフォロー管理を支援するツールです。</p>
           <p className="text-center">
@@ -43,6 +27,6 @@ export default class App extends React.Component {
         </div>;
     }
 
-    return(<p>{JSON.stringify(this.state.oauth)}</p>);
+    return <Manager token={oauth.access_token} secret={oauth.access_token_secret} />;
   }
 }

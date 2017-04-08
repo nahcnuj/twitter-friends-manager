@@ -30967,9 +30967,9 @@ var _reactCookie = require('react-cookie');
 
 var _reactCookie2 = _interopRequireDefault(_reactCookie);
 
-var _jquery = require('jquery');
+var _Manager = require('./Manager');
 
-var _jquery2 = _interopRequireDefault(_jquery);
+var _Manager2 = _interopRequireDefault(_Manager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30979,8 +30979,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-//import Twitter from 'twitter';
-
 var App = function (_React$Component) {
   _inherits(App, _React$Component);
 
@@ -30989,34 +30987,18 @@ var App = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-    var oauthData = _reactCookie2.default.load('oauth', true);
-    if (oauthData !== undefined) {
-      _this.state = {
-        oauth: JSON.parse(oauthData)
-      };
-    } else {
-      _this.state = {
-        oauth: undefined
-      };
-    }
+    _this.state = {
+      oauth: _reactCookie2.default.load('oauth')
+    };
     return _this;
   }
 
   _createClass(App, [{
-    key: 'componentWillMount',
-    value: function componentWillMount() {
-      /*$.ajax({
-        url: '/',
-        dataType: 'json',
-        cache: false,
-        success: (data) => { this.setState({oauth: JSON.stringify(data)}); },
-        error: (xhr, status, err) => { console.error(this.props, status, err.toString()); }
-      });*/
-    }
-  }, {
     key: 'render',
     value: function render() {
-      if (!this.state.oauth) {
+      var oauth = this.state.oauth;
+
+      if (!oauth) {
         return _react2.default.createElement(
           'div',
           null,
@@ -31038,11 +31020,7 @@ var App = function (_React$Component) {
         );
       }
 
-      return _react2.default.createElement(
-        'p',
-        null,
-        JSON.stringify(this.state.oauth)
-      );
+      return _react2.default.createElement(_Manager2.default, { token: oauth.access_token, secret: oauth.access_token_secret });
     }
   }]);
 
@@ -31051,7 +31029,243 @@ var App = function (_React$Component) {
 
 exports.default = App;
 
-},{"jquery":26,"react":183,"react-cookie":28,"react-dom":30}],185:[function(require,module,exports){
+},{"./Manager":185,"react":183,"react-cookie":28,"react-dom":30}],185:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactCookie = require('react-cookie');
+
+var _reactCookie2 = _interopRequireDefault(_reactCookie);
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _ManagerTable = require('./ManagerTable');
+
+var _ManagerTable2 = _interopRequireDefault(_ManagerTable);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Manager = function (_React$Component) {
+  _inherits(Manager, _React$Component);
+
+  function Manager(props) {
+    _classCallCheck(this, Manager);
+
+    var _this = _possibleConstructorReturn(this, (Manager.__proto__ || Object.getPrototypeOf(Manager)).call(this, props));
+
+    var followings = JSON.parse(localStorage.getItem('following_users')) || [];
+    var followingNext = localStorage.getItem('following_next') || -1;
+
+    _this.state = {
+      data: followings,
+      nextCursor: followingNext,
+      isDone: false
+    };
+    return _this;
+  }
+
+  _createClass(Manager, [{
+    key: 'loadData',
+    value: function loadData() {
+      var _this2 = this;
+
+      var nextCursor = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
+
+      var _cookie$load = _reactCookie2.default.load('oauth'),
+          token = _cookie$load.access_token,
+          secret = _cookie$load.access_token_secret;
+
+      _jquery2.default.ajax({
+        url: '/load',
+        data: {
+          cursor: nextCursor,
+          token: token,
+          secret: secret,
+          needDelay: this.state.needDelay
+        },
+        dataType: 'json',
+        cache: false,
+        success: function success(_ref) {
+          var data = _ref.data,
+              next = _ref.next;
+
+          var newData = _this2.state.data.concat(data);
+
+          localStorage.setItem('following_users', JSON.stringify(newData));
+          localStorage.setItem('following_next', next);
+
+          var isLast = next === 0;
+          _this2.setState({
+            data: newData,
+            nextCursor: next,
+            isDone: isLast
+          });
+
+          var delay = _this2.state.needDelay ? 60000 : 0;
+          if (!isLast) {
+            setTimeout(function () {
+              _this2.loadData(next);
+            }, delay);
+          }
+        },
+        error: function error(xhr, status, err) {
+          console.error(_this2.props, status, err.toString());
+        }
+      });
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this3 = this;
+
+      var _cookie$load2 = _reactCookie2.default.load('oauth'),
+          token = _cookie$load2.access_token,
+          secret = _cookie$load2.access_token_secret;
+
+      _jquery2.default.ajax({
+        url: '/load/delay',
+        data: {
+          token: token,
+          secret: secret
+        },
+        dataType: 'text',
+        cache: false,
+        success: function success(result) {
+          var count = parseInt(result, 10);
+          _this3.setState({ count: count, needDelay: count > 900 });
+          return count;
+        },
+        error: function error(xhr, status, err) {
+          console.error(_this3.props, status, err.toString());
+        }
+      }).then(function (count) {
+        if (_this3.state.nextCursor !== 0) {
+          _this3.loadData(_this3.state.nextCursor);
+        }
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        this.state.isDone ? _react2.default.createElement(
+          'p',
+          null,
+          'Done.'
+        ) : _react2.default.createElement(
+          'p',
+          null,
+          'Now loading... (',
+          this.state.data.length,
+          ' / ',
+          this.state.count,
+          ')'
+        ),
+        _react2.default.createElement(_ManagerTable2.default, { data: this.state.data })
+      )
+      /*<table className="table table-striped table-condensed manager">
+        <thead>
+          <tr>
+          <th colSpan="2">アカウント</th>
+          <th>プロフィール</th>
+          <th colSpan="2">最近のツイート</th>
+          <th>フォロー</th>
+          </tr>
+        </thead>
+        <tbody>
+          </tbody>
+      </table>*/
+      ;
+    }
+  }]);
+
+  return Manager;
+}(_react2.default.Component);
+
+exports.default = Manager;
+
+},{"./ManagerTable":186,"jquery":26,"react":183,"react-cookie":28,"react-dom":30}],186:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactCookie = require('react-cookie');
+
+var _reactCookie2 = _interopRequireDefault(_reactCookie);
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Manager = function (_React$Component) {
+  _inherits(Manager, _React$Component);
+
+  function Manager(props) {
+    _classCallCheck(this, Manager);
+
+    return _possibleConstructorReturn(this, (Manager.__proto__ || Object.getPrototypeOf(Manager)).call(this, props));
+  }
+
+  _createClass(Manager, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'p',
+        null,
+        JSON.stringify(this.props.data)
+      );
+    }
+  }]);
+
+  return Manager;
+}(_react2.default.Component);
+
+exports.default = Manager;
+
+},{"jquery":26,"react":183,"react-cookie":28,"react-dom":30}],187:[function(require,module,exports){
 'use strict';
 
 var _reactDom = require('react-dom');
@@ -31070,4 +31284,4 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _reactDom2.default.render(_react2.default.createElement(_App2.default, null), document.getElementById('app'));
 
-},{"./components/App":184,"react":183,"react-dom":30}]},{},[185]);
+},{"./components/App":184,"react":183,"react-dom":30}]},{},[187]);
