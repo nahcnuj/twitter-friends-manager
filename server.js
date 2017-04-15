@@ -52,15 +52,21 @@ app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap-social/ass
 // routes
 const index = require('./routes/index');
 const twitter = require('./routes/twitter');
-const load = require('./routes/load');
+const count = require('./routes/count');
+const ids = require('./routes/ids');
+const tweets = require('./routes/tweets');
 
 app.use('/', index);
 app.use('/auth/twitter', twitter);
-app.use('/load', load);
+app.use('/count', count);
+app.use('/ids', ids);
+app.use('/tweets', tweets);
 
 app.listen(app.get('port'),
     () => {
         console.log('Server started at http://localhost:' + app.get('port'));
     });
+
+process.on('unhandledRejection', console.dir);
 
 module.exports = app;

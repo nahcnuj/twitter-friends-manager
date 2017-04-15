@@ -3,12 +3,24 @@ import React from 'react';
 import cookie from 'react-cookie';
 import $ from 'jquery';
 
-export default class Manager extends React.Component {
+import UserDataModel from '../models/UserDataModel';
+
+export default class ManagerTable extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
-    return <p>{JSON.stringify(this.props.data)}</p>;
+    let list = [];
+
+    //console.log(this.props.db.all);
+
+    for (const [id_str, user] of this.props.db.all) {
+      list.push(<li key={id_str}>{JSON.stringify(user)}</li>);
+    }
+
+    return <ul>
+      {list}
+    </ul>;
   }
 }

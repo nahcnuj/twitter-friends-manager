@@ -41,7 +41,11 @@ gulp.task('server',
 
 gulp.task('watch',
     () => {
-        gulp.watch(['./react_sources/index.js', './views/*.ejs', './react_sources/components/*.js'], ['build']);
+        gulp.watch(['./react_sources/index.js',
+                './views/*.ejs',
+                './react_sources/components/*.js',
+                './react_sources/models/*.js'],
+            ['build']);
     });
 
 gulp.task('default', ['server', 'build', 'watch', 'browser-sync']);

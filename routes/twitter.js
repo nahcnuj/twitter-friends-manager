@@ -43,18 +43,20 @@ router.get('/callback', function(req, res, next) {
           res.status(403).send('something broke');
         }
 
-        const unplug = reactCookie.plugToRequest(req, res);
-
         req.session.oauth.access_token = access_token;
         req.session.oauth.access_token_secret = access_token_secret;
-        
+
+        req.session.save();
+        /*
+        const unplug = reactCookie.plugToRequest(req, res);
+
         reactCookie.remove('oauth', {path: '/'});
         let value = {
           access_token: access_token,
           access_token_secret: access_token_secret
         };
         reactCookie.save('oauth', JSON.stringify(value), {path: '/'});
-        unplug();
+        unplug();*/
 
         res.redirect('/');
       }

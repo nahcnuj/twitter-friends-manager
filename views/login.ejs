@@ -29,10 +29,12 @@
 
 <section>
 <div class="container">
-<% if (typeof msg !== "undefined") { %>
-<p class="alert alert-danger"><%= msg %></p>
-<% } %>
-<div id="app"></div>
+<p class="lead">Twitter のフォロー管理を支援するツールです。</p>
+<p class="text-center">
+<a class="btn btn-social btn-twitter btn-lg" href="/auth/twitter">
+<span class="fa fa-twitter"></span>
+Sign in with Twitter
+</a></p>
 
 <div class="text-center">
 <!-- admax -->
@@ -48,7 +50,6 @@
 </div>
 </footer>
 
-<script src="/javascripts/bundle.js"></script>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 </body>

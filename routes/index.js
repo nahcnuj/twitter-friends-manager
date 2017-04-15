@@ -4,7 +4,12 @@ var router = express.Router();
 /* GET / */
 router.get('/',
   (req, res, next) => {
-    res.render('index');
+    if (req.session.oauth === undefined) {
+      res.render('login');
+    }
+    else {
+      res.render('index', {msg: req.query.msg});
+    }
   });
 
 module.exports = router;
