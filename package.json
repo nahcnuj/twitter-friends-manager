@@ -23,6 +23,7 @@
     "react": "^15.4.2",
     "react-cookie": "^1.0.5",
     "react-dom": "^15.4.2",
+    "react-pager": "^1.2.1",
     "serve-favicon": "~2.3.2",
     "superagent": "^3.5.2",
     "twitter": "^1.7.0"

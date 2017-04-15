@@ -36,6 +36,13 @@ export default class UserDataModel {
     this.notify();
   }
 
+  /**
+   * [start, end)
+   */
+  subarray(start, end) {
+    return Array.from(this.data).slice(start, end);
+  }
+
   clear() {
     this.data.clear();
     this.notify();
