@@ -55,12 +55,14 @@ const twitter = require('./routes/twitter');
 const count = require('./routes/count');
 const ids = require('./routes/ids');
 const tweets = require('./routes/tweets');
+const unfollow = require('./routes/unfollow');
 
 app.use('/', index);
 app.use('/auth/twitter', twitter);
 app.use('/count', count);
 app.use('/ids', ids);
 app.use('/tweets', tweets);
+app.use('/unfollow', unfollow);
 
 app.listen(app.get('port'),
     () => {
