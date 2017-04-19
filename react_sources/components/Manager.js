@@ -12,9 +12,7 @@ export default class Manager extends React.Component {
   render() {
     let startIdx = this.props.currentPage * this.props.options.usersPerPage;
     let data = this.props.data.subarray(startIdx, startIdx + this.props.options.usersPerPage);
-    return <div>
-        <ManagerTable data={data} />
-      </div>;
+    return <ManagerTable data={data} />;
   }
   
 
