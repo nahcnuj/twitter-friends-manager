@@ -133,7 +133,7 @@ export default class App extends React.Component {
   getLastestTweets(ids) {
     let _this = this;
 
-    const idsPerRequest = 10;
+    const idsPerRequest = 100;
     
     let sliced = [];
     for (let i = 0; i < ids.length; i += idsPerRequest) {
