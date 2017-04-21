@@ -3,6 +3,23 @@
   margin-top: 0;
 }
 
+.profile-column {
+  width: 20%;
+}
+
+.tweet-column {
+  width: 50%;
+}
+
+.profile-image {
+  width: 4em;
+}
+
+.description-cell {
+  font-size: 90%;
+  line-height: 1.1em;
+}
+
 a.no-hover {
   color: inherit;
   text-decoration: inherit;

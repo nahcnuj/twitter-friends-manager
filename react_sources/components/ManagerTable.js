@@ -22,7 +22,7 @@ export default class ManagerTable extends React.Component {
       body.push(
         <tr key={id_str}>
           <td><a href={'https://twitter.com/'+user.screen_name} className='no-hover'>
-            <img src={user.profile_image_url} />
+            <img src={user.profile_image_url} className='profile-image' />
           </a></td>
           <td><a href={'https://twitter.com/'+user.screen_name} className='no-hover'>
             <small className='text-muted'>
@@ -32,10 +32,10 @@ export default class ManagerTable extends React.Component {
             </small><br />
             {user.name}
           </a></td>
-          <td style={{width:'30%',lineHeight:'1.1em'}}>
-            <small>{user.description}</small>
+          <td className='description-cell'>
+            {user.description}
           </td>
-          <td style={{width:'50%'}}>
+          <td>
             {user.status.text}<br />
             <small>{new Moment(new Date(user.status.created_at)).format('YYYY/MM/DD HH:mm:ss [(UTC]Z[)]')}</small>
           </td>
@@ -52,6 +52,12 @@ export default class ManagerTable extends React.Component {
 
     return (
       <table className='table table-striped table-condensed manager' style={{width:'100%',maxWidth:'100%'}}>
+        <colgroup>
+          <col className='account-column' span='2' />
+          <col className='profile-column' />
+          <col className='tweet-column' />
+          <col className='follow-column' />
+        </colgroup>
         <thead>
           <tr>
           <th colSpan='2'>アカウント</th>
