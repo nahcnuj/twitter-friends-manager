@@ -26,7 +26,7 @@ export default class ManagerTable extends React.Component {
       body.push(
         <tr key={id_str}>
           <td><a href={'https://twitter.com/'+user.screen_name} className='no-hover'>
-            <img src={user.profile_image_url} className='profile-image' />
+            <img src={user.profile_image_url_https} className='profile-image' />
           </a></td>
           <td><a href={'https://twitter.com/'+user.screen_name} className='no-hover'>
             <small className='text-muted'>

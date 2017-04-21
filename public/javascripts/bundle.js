@@ -27480,7 +27480,7 @@ var ManagerTable = function (_React$Component) {
               _react2.default.createElement(
                 'a',
                 { href: 'https://twitter.com/' + user.screen_name, className: 'no-hover' },
-                _react2.default.createElement('img', { src: user.profile_image_url, className: 'profile-image' })
+                _react2.default.createElement('img', { src: user.profile_image_url_https, className: 'profile-image' })
               )
             ),
             _react2.default.createElement(
