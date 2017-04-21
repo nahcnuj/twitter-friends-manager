@@ -36,7 +36,7 @@ gulp.task('build',
 
 gulp.task('server',
     () => {
-        node('./server.js', [], [], []);
+        node('./app.js', [], [], []);
     });
 
 gulp.task('watch',
