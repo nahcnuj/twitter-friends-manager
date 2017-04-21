@@ -38,35 +38,3 @@ function createClient(accessToken, accessTokenSecret) {
     access_token_secret: accessTokenSecret
   });
 }
-
-/**
- * get a list of the logging-in user
- * @param {Twitter} client - Twitter API client
- */
-function getFriends(client, cursor) {
-  return client.get('friends/list', {cursor: cursor, count: 200, skip_status: true, include_user_entities: false})
-    .then(result => ({
-      users: result.users,
-      next: result.next_cursor_str
-    }))
-    .catch((reason) => {
-      console.error('[getFriends] ' + JSON.stringify(reason));
-      throw reason;
-    });
-}
-
-/**
- * get the last tweet which the specified user posted
- * @param {Twitter} client - Twitter API client
- * @param {string} screen_name - a user's screen name
- */
-function getLastTweet(client, screen_name) {
-  return client.get('statuses/user_timeline', {
-      screen_name: screen_name,
-      count: 1
-    })
-    .catch((reason) => {
-      console.error('[getLastTweet] ' + JSON.stringify(reason));
-      throw reason;
-    });
-}

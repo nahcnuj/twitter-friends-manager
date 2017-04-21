@@ -9,6 +9,8 @@ import UserDataModel from '../models/UserDataModel';
 import Manager from './Manager';
 import AlertBox from './AlertBox';
 
+const pagerTitles = {first: 'First', last: 'Last', prev: '<', next: '>', prevSet: '<<', nextSet: '>>'};
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -27,14 +29,15 @@ export default class App extends React.Component {
       currentPage: 0,
       visiblePages: 5,
       options: options,
-      database: new UserDataModel()
+      database: new UserDataModel(),
+      isDone: false
     };
   }
 
   componentDidMount() {
     let _this = this;
 
-    let data = new Map(JSON.parse(localStorage.getItem('followings')));
+    let data = new Map();//new Map(JSON.parse(localStorage.getItem('followings')));
     this.database = new UserDataModel(data, this.updateDatabase);
     this.setState({database: this.database});
     
@@ -48,14 +51,13 @@ export default class App extends React.Component {
           total={this.state.totalPages}
           current={this.state.currentPage}
           visiblePages={this.state.visiblePages}
-          titles={{first: 'First', last: 'Last',
-                   prev: '<', next: '>',
-                   prevSet: '<<', nextSet: '>>'}}
+          titles={pagerTitles}
           onPageChanged={this.pageChangedHandler} />
       </div>
     );
 
     return <div>
+        {this.state.isDone ? null : <p className='alert'>Now loading...</p>}
         <AlertBox error={this.state.error} />
         {pager}
         <Manager
@@ -76,7 +78,7 @@ export default class App extends React.Component {
       totalPages: Math.floor(newDB.data.size/this.state.options.usersPerPage + 0.9),
       database: newDB
     });
-    localStorage.setItem('followings', newDB.toString());
+    //localStorage.setItem('followings', newDB.toString());
   }
 
 
@@ -120,6 +122,7 @@ export default class App extends React.Component {
           .then(({text}) => {
               let {ids, next_cursor_str} = JSON.parse(text);
               _this.getLastestTweets(ids);
+              _this.database.set(ids);
               _this.getFollowingIds(next_cursor_str);
             })
           .catch((err) => {
@@ -146,17 +149,17 @@ export default class App extends React.Component {
             Request.post('/tweets')
               .send({ids: ids})
               .then(({text: res}) => {
-                  let arr = JSON.parse(res);
-                  arr.forEach((elem, idx, arr) => {
-                      _this.database.add(elem);
-                    });
-                })
-              .catch((err) => {
-                  console.log(err);
-                  _this.setState({error: err.response.text});
-                })
+                let tweets = JSON.parse(res);
+                _this.database.set(tweets);
+                resolve();
+              })
           }
         )
-      ));
+      ))
+      .then(() => _this.setState({isDone: true}))
+      .catch((err) => {
+          console.log(err);
+          _this.setState({error: err.response.text});
+        });
   }
 }

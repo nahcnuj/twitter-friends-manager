@@ -19,6 +19,10 @@ export default class ManagerTable extends React.Component {
     let list = [];
 
     for (const [id_str, user] of this.props.data) {
+      if (typeof user === 'undefined') {
+        continue;
+      }
+      
       body.push(
         <tr key={id_str}>
           <td><a href={'https://twitter.com/'+user.screen_name} className='no-hover'>

@@ -28,11 +28,18 @@ export default class UserDataModel {
 
   /**
    * 
-   * @param {*} userData 
+   * @param {Array<T>} users array of responses for the API friends/ids or users/lookup
    */
-  add(userData) {
-    //console.log('add() '+JSON.stringify(this.data));
-    this.data.set(userData.id_str, userData);
+  set(users) {
+    for (let u of users) {
+      let {id_str = undefined} = u;
+      if (typeof id_str === 'undefined') {
+        this.data.set(u, undefined);
+      }
+      else {
+        this.data.set(u.id_str, u);
+      }
+    }
     this.notify();
   }
 

@@ -27086,6 +27086,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var pagerTitles = { first: 'First', last: 'Last', prev: '<', next: '>', prevSet: '<<', nextSet: '>>' };
+
 var App = function (_React$Component) {
   _inherits(App, _React$Component);
 
@@ -27108,7 +27110,8 @@ var App = function (_React$Component) {
       currentPage: 0,
       visiblePages: 5,
       options: options,
-      database: new _UserDataModel2.default()
+      database: new _UserDataModel2.default(),
+      isDone: false
     };
     return _this2;
   }
@@ -27118,7 +27121,7 @@ var App = function (_React$Component) {
     value: function componentDidMount() {
       var _this = this;
 
-      var data = new Map(JSON.parse(localStorage.getItem('followings')));
+      var data = new Map(); //new Map(JSON.parse(localStorage.getItem('followings')));
       this.database = new _UserDataModel2.default(data, this.updateDatabase);
       this.setState({ database: this.database });
 
@@ -27134,15 +27137,18 @@ var App = function (_React$Component) {
           total: this.state.totalPages,
           current: this.state.currentPage,
           visiblePages: this.state.visiblePages,
-          titles: { first: 'First', last: 'Last',
-            prev: '<', next: '>',
-            prevSet: '<<', nextSet: '>>' },
+          titles: pagerTitles,
           onPageChanged: this.pageChangedHandler })
       );
 
       return _react2.default.createElement(
         'div',
         null,
+        this.state.isDone ? null : _react2.default.createElement(
+          'p',
+          { className: 'alert' },
+          'Now loading...'
+        ),
         _react2.default.createElement(_AlertBox2.default, { error: this.state.error }),
         pager,
         _react2.default.createElement(_Manager2.default, {
@@ -27164,7 +27170,7 @@ var App = function (_React$Component) {
         totalPages: Math.floor(newDB.data.size / this.state.options.usersPerPage + 0.9),
         database: newDB
       });
-      localStorage.setItem('followings', newDB.toString());
+      //localStorage.setItem('followings', newDB.toString());
     }
   }, {
     key: 'reset',
@@ -27210,6 +27216,7 @@ var App = function (_React$Component) {
               next_cursor_str = _JSON$parse.next_cursor_str;
 
           _this.getLastestTweets(ids);
+          _this.database.set(ids);
           _this.getFollowingIds(next_cursor_str);
         }).catch(function (err) {
           console.log(err);
@@ -27234,16 +27241,17 @@ var App = function (_React$Component) {
           _superagent2.default.post('/tweets').send({ ids: ids }).then(function (_ref2) {
             var res = _ref2.text;
 
-            var arr = JSON.parse(res);
-            arr.forEach(function (elem, idx, arr) {
-              _this.database.add(elem);
-            });
-          }).catch(function (err) {
-            console.log(err);
-            _this.setState({ error: err.response.text });
+            var tweets = JSON.parse(res);
+            _this.database.set(tweets);
+            resolve();
           });
         });
-      }));
+      })).then(function () {
+        return _this.setState({ isDone: true });
+      }).catch(function (err) {
+        console.log(err);
+        _this.setState({ error: err.response.text });
+      });
     }
   }]);
 
@@ -27459,6 +27467,10 @@ var ManagerTable = function (_React$Component) {
               id_str = _step$value[0],
               user = _step$value[1];
 
+          if (typeof user === 'undefined') {
+            continue;
+          }
+
           body.push(_react2.default.createElement(
             'tr',
             { key: id_str },
@@ -27468,7 +27480,7 @@ var ManagerTable = function (_React$Component) {
               _react2.default.createElement(
                 'a',
                 { href: 'https://twitter.com/' + user.screen_name, className: 'no-hover' },
-                _react2.default.createElement('img', { src: user.profile_image_url })
+                _react2.default.createElement('img', { src: user.profile_image_url, className: 'profile-image' })
               )
             ),
             _react2.default.createElement(
@@ -27491,16 +27503,12 @@ var ManagerTable = function (_React$Component) {
             ),
             _react2.default.createElement(
               'td',
-              { style: { width: '30%', lineHeight: '1.1em' } },
-              _react2.default.createElement(
-                'small',
-                null,
-                user.description
-              )
+              { className: 'description-cell' },
+              user.description
             ),
             _react2.default.createElement(
               'td',
-              { style: { width: '50%' } },
+              null,
               user.status.text,
               _react2.default.createElement('br', null),
               _react2.default.createElement(
@@ -27544,6 +27552,14 @@ var ManagerTable = function (_React$Component) {
       return _react2.default.createElement(
         'table',
         { className: 'table table-striped table-condensed manager', style: { width: '100%', maxWidth: '100%' } },
+        _react2.default.createElement(
+          'colgroup',
+          null,
+          _react2.default.createElement('col', { className: 'account-column', span: '2' }),
+          _react2.default.createElement('col', { className: 'profile-column' }),
+          _react2.default.createElement('col', { className: 'tweet-column' }),
+          _react2.default.createElement('col', { className: 'follow-column' })
+        ),
         _react2.default.createElement(
           'thead',
           null,
@@ -27655,16 +27671,45 @@ var UserDataModel = function () {
   }
 
   _createClass(UserDataModel, [{
-    key: 'add',
+    key: 'set',
 
 
     /**
      * 
-     * @param {*} userData 
+     * @param {Array<T>} users array of responses for the API friends/ids or users/lookup
      */
-    value: function add(userData) {
-      //console.log('add() '+JSON.stringify(this.data));
-      this.data.set(userData.id_str, userData);
+    value: function set(users) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = users[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var u = _step.value;
+          var _u$id_str = u.id_str,
+              id_str = _u$id_str === undefined ? undefined : _u$id_str;
+
+          if (typeof id_str === 'undefined') {
+            this.data.set(u, undefined);
+          } else {
+            this.data.set(u.id_str, u);
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
       this.notify();
     }
 
